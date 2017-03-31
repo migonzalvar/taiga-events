@@ -22,7 +22,11 @@ class Client
         else if msg.cmd == 'auth'
             @.authUser(msg.data)
         else if msg.cmd == 'subscribe'
-            @.addSubscription(msg.routing_key)
+            if msg.routing_key and msg.routing_key.indexOf("live_notifications") == 0
+                userId = signing.getUserId(@.auth.token)
+                @.addSubscription("live_notifications.#{userId}")
+            else
+                @.addSubscription(msg.routing_key)
         else if msg.cmd == 'unsubscribe'
             @.removeSubscription(msg.routing_key)
 
